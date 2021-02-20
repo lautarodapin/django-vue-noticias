@@ -23,10 +23,11 @@ import api.routing
 application = ProtocolTypeRouter({
   "http": django_asgi_app,
   "websocket":
-  AuthMiddlewareStack(
-    # TokenAuthMiddleware(
-      URLRouter([
-        re_path(r"^ws/$", api.routing.EntryDeMultiplexer.as_asgi()),
-      ]),
-    ),
+    AuthMiddlewareStack(
+      TokenAuthMiddleware(
+        URLRouter([
+          re_path(r"^ws/$", api.routing.EntryDeMultiplexer.as_asgi()),
+        ]),
+      ),
+    )
 })

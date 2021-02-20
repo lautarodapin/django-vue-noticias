@@ -6,6 +6,11 @@ class EntryDeMultiplexer(AsyncJsonWebsocketDemultiplexer):
         "room": RoomConsumer.as_asgi(),
         "user": UserConsumerObserver.as_asgi(),
     }
+    
     async def receive_json(self, content, **kwargs):
         print(content)
         return await super().receive_json(content, **kwargs)
+
+    async def websocket_connect(self, message):
+        print(message)
+        return await super().websocket_connect(message) 

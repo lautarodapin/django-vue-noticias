@@ -55,6 +55,7 @@ export default {
   },
   mounted(){
     this.getToken();
+    this.$store.dispatch("setWs")
   }
 }
 </script>
