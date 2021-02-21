@@ -2,16 +2,19 @@
   <div id="nav">
     <router-link :to="{name:'Notas'}">Notas</router-link>
     |
-    <router-link :to="{name:'Rooms'}">Rooms</router-link>
-    |
     <router-link :to="{name:'NotaForm'}">Crear nota</router-link>
     |
+    <router-link :to="{name:'Rooms'}">Chats</router-link>
+    |
     <span v-if="isAuth">
+      Hola {{user.username}}
+      |
       <a href="#" @click="logout">Logout</a>
     </span>
     <span v-else>
       <router-link :to="{name:'Login'}">Login</router-link> 
     </span>
+
 
   </div>
   <router-view/>
@@ -29,7 +32,7 @@ export default {
       this.$router.push({name:"Notas"});
     },
     getToken(){
-      if(this.$store.state.token != null){
+      if(this.token != null){
         this.axios.post("/get-token/", {
           method:"POST",
           token:this.$store.state.token,
@@ -44,7 +47,7 @@ export default {
   },
   computed:{
     isAuth(){
-      return this.$store.state.token != null 
+      return this.$store.state.token != null && this.$store.state.user != null
     },
     user(){
       return this.$store.state.user

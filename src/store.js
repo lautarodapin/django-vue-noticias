@@ -19,8 +19,7 @@ export default createStore({
         login(state, data){
             console.log("Mutation login executed", data)
             state.token = data.token;
-            state.user = data.user
-         
+            state.user = data.user 
         },
         logout(state){
             console.log("Mutation logout executed")

@@ -10,44 +10,44 @@
         <label for="id_subtitulo">Subtitulo</label>
         <input type="text" v-model="subtitulo" id="id_subtitulo" class="form-control">
       </div>
-      <div class="form-group">
+      <!-- <div class="form-group">
         <label for="id_cuerpo">Cuerpo</label>
         <textarea v-model="cuerpo" id="id_cuerpo" rows="10" class="form-control"></textarea>
+      </div> -->
+      <div class="form-group">
+        <quill-editor
+          v-model="cuerpo"
+          :options="editorOption"
+          style="height:400px;"
+          @change="onEditorChange($event)"
+        ></quill-editor>
       </div>
-      <!-- <quill-editor
-        :content="content"
-        :options="editorOption"
-        @change="onEditorChange($event)"
-      ></quill-editor> -->
       <input type="submit" value="Crear" class="btn btn-lg btn-success">
     </form>
   </div>
 </template>
 
 <script>
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill/dist/quill.bubble.css'
-// import { quillEditor } from 'vue-quill-editor'
+import { quillEditor } from 'vue3-quill'
+
 
 export default {
   name: 'NotaForm',
   components:{
-    // quillEditor
+    quillEditor
   },
   data(){
     return {
-      content:"",
+      cuerpo:"",
       editorOption: {},
       titulo:"",
       subtitulo:"",
-      cuerpo:"",
     }
   },
   methods:{
     onEditorChange({ quill, html, text }){
         console.log('editor change!', quill, html, text)
-        this.content = html
+        this.cuerpo = html
     },
     crearNota(){
       console.log("Crear nota");
@@ -60,12 +60,17 @@ export default {
       console.log(data);
       this.axios.post('/nota/', data, {
         headers:{
-          "Authorization":"Token " + this.$store.state.token,
+          "Authorization":"Token " + this.token,
         }
       }).then(response=>{
         console.log(response)
       })
     },
+  },
+  computed:{
+    token(){
+      return this.$store.state.token
+    }
   },
   created(){
   },

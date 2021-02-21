@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h3>Ingrese a un chat!</h3>
     <div class="row">
       <div v-for="(room, index) in rooms" :key="index" class="col">
         <div class="card">
@@ -26,16 +27,19 @@
       </div>
     </div>
     <hr />
-    <h4>Crear nuevo room</h4>
-    <form v-if="selected == false" @submit.prevent="createRoom" method="post">
-      <div class="form-group">
-        <label for="id_nombre">Nombre</label>
-        <input type="text" class="form-control" name="Nombre" v-model="nombre" id="id_nombre" />
-      </div>
-      <input type="submit" value="Crear" class="btn btn-sm btn-success"/>
-    </form>
+    <div v-if="selected == false" class="container">
+      <h4>Crear nuevo chat</h4>
+      <form  @submit.prevent="createRoom" method="post">
+        <div class="form-group">
+          <label for="id_nombre">Nombre</label>
+          <input type="text" class="form-control" name="Nombre" v-model="nombre" id="id_nombre" />
+        </div>
+        <input type="submit" value="Crear" class="btn btn-sm btn-success"/>
+      </form>
+    </div>
     <div v-else class="container">
-      <button @click="this.selected = false;this.leaveRoom();" class="btn btn-sm btn-success">Volver</button>
+      <floating-button @click.prevent="back"></floating-button>
+
       <h3>{{ room.nombre }} | {{ room.host.username }}</h3>
       <div class="current-users card">
           <ul class="list-group list-group-flush">
@@ -80,9 +84,14 @@
 </template>
 
 <script>
+import FloatingButton from "../components/FloatingButton.vue";
+
+
 export default {
   name: "Rooms",
-  components: {},
+  components: {
+    FloatingButton
+  },
   data() {
     return {
       nombre: "",
@@ -95,6 +104,10 @@ export default {
     };
   },
   methods: {
+    back(){
+      this.selected = false;
+      this.leaveRoom();
+    },
     submitMensaje() {
        this.ws.send(JSON.stringify({
            stream:"room",

@@ -12,24 +12,23 @@
         <h5>{{nota.created_at}}</h5>
       </div>
     </div>
-    <p class="lead">
-        {{nota.cuerpo}}
-
-    </p>
-    <hr>
-    <h6 class="lead">Comentarios</h6>
-    <div class="row">
-        <div class="col-12" v-for="(comentario, index) in nota.comentarios" :key="index">
-            <Comentario  :comentario="comentario" ></Comentario>
-        </div>
-        <div class="col-12">
-            <form v-if="isAuth" @submit.prevent="postComentario" method="post">
-                <div class="form-group">
-                    <textarea v-model="comentario"  rows="3" class="form-control" placeholder="Comentario..."></textarea>
-                </div>
-                <input type="submit" class="btn btn-sm btn-success" value="Comentar">
-            </form>
-        </div>
+    <div class="container">
+          <p class="lead" v-html="nota.cuerpo"></p>
+          <hr>
+          <h6 class="lead">Comentarios</h6>
+          <div class="row">
+               <div class="col-12" v-for="(comentario, index) in nota.comentarios" :key="index">
+                    <Comentario  :comentario="comentario" ></Comentario>
+               </div>
+               <div class="col-12">
+                    <form v-if="isAuth" @submit.prevent="postComentario" method="post">
+                         <div class="form-group">
+                              <textarea v-model="comentario"  rows="3" class="form-control" placeholder="Comentario..."></textarea>
+                         </div>
+                         <input type="submit" class="btn btn-sm btn-success" value="Comentar">
+                    </form>
+               </div>
+          </div>
     </div>
   </div>
 </template>

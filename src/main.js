@@ -24,4 +24,9 @@ const app = createApp(App).use(store)
 app.axios.defaults.baseURL = "http://127.0.0.1:8000/api/"
 
 
+// QUILL
+
+import { quillEditor } from 'vue3-quill'
+app.use(quillEditor)
+
 app.mount('#app')

@@ -1,7 +1,7 @@
 <template>
   <div v-if="nota != null">
-    <button @click="this.nota=null;getNotas();" class="btn btn-sm btn-success">Volver</button>
     <Nota :nota="nota"></Nota>
+    <floating-button @click.prevent="back"></floating-button>
   </div>
   <div v-else class="notas container">
     <div class="row">
@@ -12,9 +12,7 @@
                     {{nota.titulo}}
                 </div>
                 <div class="card-body">
-                    <p class="card-tex">
-                        {{nota.cuerpo}}
-                    </p>
+                    <p class="card-text" v-html="cuerpoSinImg(nota.cuerpo)"></p>
                     <button @click="select(nota)" class="btn btn-sm btn-success">Abrir</button>
                 </div>
             </div>
@@ -25,11 +23,14 @@
 
 <script>
 import Nota from "../components/Nota.vue";
+import FloatingButton from "../components/FloatingButton.vue";
+
 
 export default {
   name: 'Notas',
   components:{
     "Nota":Nota,
+    FloatingButton,
   },
   data(){
     return {
@@ -37,7 +38,16 @@ export default {
       nota:null,
     }
   },
+  computed:{
+  },
   methods:{
+    back(){
+      this.nota=null;
+      this.getNotas();
+    },
+    cuerpoSinImg(cuerpo){
+      return cuerpo.replace(/<img[^>]*>/g, "")
+    },
     select(nota){
       this.nota = nota;
     },
