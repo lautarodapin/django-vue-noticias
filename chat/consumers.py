@@ -52,6 +52,10 @@ class RoomConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer):
     def get_object(self, **kwargs) -> Room:
         return get_object_or_404(Room, pk=kwargs["pk"])
 
+    @action()
+    async def leave_room(self, pk, **kwargs):
+        await self.remove_user_from_room(pk)
+        await self.notify_users()
 
     @action()
     async def join_room(self, pk, **kwargs):
@@ -105,7 +109,7 @@ class RoomConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer):
             )
 
     async def update_users(self, event:dict):
-        await self.send(text_data=json.dumps({'usuarios':event["usuarios"]}))
+        await self.send(text_data=json.dumps({"data":event["usuarios"], "action":"update_users"}))
   
     @database_sync_to_async
     def get_room(self, pk:int)->Room:

@@ -1,15 +1,25 @@
 <template>
   <div v-if="nota != null">
-    <button @click="this.nota=null;getNotas();">Back</button>
+    <button @click="this.nota=null;getNotas();" class="btn btn-sm btn-success">Volver</button>
     <Nota :nota="nota"></Nota>
   </div>
-  <div v-else class="notas">
-    <div :key="nota.id" v-for="nota in notas">
-          Notas
-          {{nota.titulo}}
-          <button @click="select(nota)">Select</button>
+  <div v-else class="notas container">
+    <div class="row">
+        <div :key="nota.id" v-for="nota in notas" class="col">
+            <div class="card">
+                <div class="card-header">
+                    Notas
+                    {{nota.titulo}}
+                </div>
+                <div class="card-body">
+                    <p class="card-tex">
+                        {{nota.cuerpo}}
+                    </p>
+                    <button @click="select(nota)" class="btn btn-sm btn-success">Abrir</button>
+                </div>
+            </div>
+        </div>
     </div>
-    {{test}}
   </div>
 </template>
 
@@ -23,7 +33,6 @@ export default {
   },
   data(){
     return {
-      test:this.$store.state.name,
       notas:null,
       nota:null,
     }

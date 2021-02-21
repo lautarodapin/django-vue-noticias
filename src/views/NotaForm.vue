@@ -1,19 +1,25 @@
 <template>
-  <div>
+  <div class="container">
     <h4>Nota form</h4>
     <form @submit.prevent="crearNota" method="post">
-      <label for="id_titulo">Titulo</label>
-      <input type="text" v-model="titulo" id="id_titulo">
-      <label for="id_subtitulo">Subtitulo</label>
-      <input type="text" v-model="subtitulo" id="id_subtitulo">
-      <label for="id_cuerpo">Cuerpo</label>
-      <textarea v-model="cuerpo" id="id_cuerpo" rows="10"></textarea>
+      <div class="form-group">
+        <label for="id_titulo">Titulo</label>
+        <input type="text" v-model="titulo" id="id_titulo" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="id_subtitulo">Subtitulo</label>
+        <input type="text" v-model="subtitulo" id="id_subtitulo" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="id_cuerpo">Cuerpo</label>
+        <textarea v-model="cuerpo" id="id_cuerpo" rows="10" class="form-control"></textarea>
+      </div>
       <!-- <quill-editor
         :content="content"
         :options="editorOption"
         @change="onEditorChange($event)"
       ></quill-editor> -->
-      <input type="submit" value="Crear">
+      <input type="submit" value="Crear" class="btn btn-lg btn-success">
     </form>
   </div>
 </template>

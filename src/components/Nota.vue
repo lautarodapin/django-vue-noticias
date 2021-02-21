@@ -1,19 +1,36 @@
 <template>
   <div class="nota">
-    <h1>
-      {{nota.titulo}}
-    </h1>
-    <h4>{{nota.subtitulo}}</h4>
-    <h5>{{nota.created_at}}</h5>
-    <h6>
-      {{nota.slug}}
-    </h6>
-    <p>{{nota.cuerpo}}</p>
-    <Comentario v-for="(comentario, index) in nota.comentarios" :comentario="comentario" :key="index"></Comentario>
-    <form v-if="isAuth" @submit.prevent="postComentario" method="post">
-      <textarea v-model="comentario"  rows="3"></textarea>
-      <input type="submit" value="Comentar">
-    </form>
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <h1 class="display-4">
+            {{nota.titulo}}
+          
+        </h1>
+        <h1 class="display-6 text-muted">
+            {{nota.subtitulo}}
+        </h1>
+        <h5>{{nota.created_at}}</h5>
+      </div>
+    </div>
+    <p class="lead">
+        {{nota.cuerpo}}
+
+    </p>
+    <hr>
+    <h6 class="lead">Comentarios</h6>
+    <div class="row">
+        <div class="col-12" v-for="(comentario, index) in nota.comentarios" :key="index">
+            <Comentario  :comentario="comentario" ></Comentario>
+        </div>
+        <div class="col-12">
+            <form v-if="isAuth" @submit.prevent="postComentario" method="post">
+                <div class="form-group">
+                    <textarea v-model="comentario"  rows="3" class="form-control" placeholder="Comentario..."></textarea>
+                </div>
+                <input type="submit" class="btn btn-sm btn-success" value="Comentar">
+            </form>
+        </div>
+    </div>
   </div>
 </template>
 

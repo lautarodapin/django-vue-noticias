@@ -16,6 +16,10 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login,
+    beforeEnter(to, from, next){
+      if(store.getters.isLog) return next({name:"Notas"})
+      return next();
+    },
   },
   {
     path: '/rooms',
@@ -39,10 +43,8 @@ const routes = [
     component: NotaForm,
     beforeEnter(to, from, next){
       console.log(to, from, next);
-      if (localStorage.getItem("token") != null){
-        next();
-      }
-      next({name:"Login"});
+      if (store.getters.isLog) return next();
+      return next({name:"Login"});
     },
   },
   {
