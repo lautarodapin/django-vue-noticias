@@ -1,7 +1,7 @@
 const BundleTracker = require("webpack-bundle-tracker");
 
 module.exports = {
-    publicPath: "http://0.0.0.0:8000/",
+    // publicPath: "http://0.0.0.0:8000/",
     assetsDir: 'static',
     outputDir: './dist/',
 
