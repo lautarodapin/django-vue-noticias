@@ -21,7 +21,7 @@ const app = createApp(App).use(store)
     .use(VueAxios, axios)
     .use(store)
 // .use(VueQuillEditor, /* { default global options } */)
-app.axios.defaults.baseURL = "http://127.0.0.1:8000/api/"
+app.axios.defaults.baseURL = "/api/"
 
 
 // QUILL
