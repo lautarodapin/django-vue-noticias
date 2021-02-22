@@ -54,7 +54,7 @@ export default {
   },
   methods:{
     postComentario(){
-      this.axios.post('http://127.0.0.1:8000/api/comentario/', {
+      this.axios.post('/comentario/', {
         cuerpo:this.comentario,
         nota:this.$props.nota.slug,
       }, {headers:{"Authorization":`Token ${localStorage.getItem('token')}`}})
@@ -65,7 +65,7 @@ export default {
       })
     },
     getNota(){
-      this.axios.get(`http://127.0.0.1:8000/api/nota/${this.$props.nota.slug}/`).then(response=>{this.$props.nota = response.data; console.log(response)});
+      this.axios.get(`/nota/${this.$props.nota.slug}/`).then(response=>{this.$props.nota = response.data; console.log(response)});
     }
   },
   created(){
