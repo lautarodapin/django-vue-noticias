@@ -19,7 +19,8 @@
     "vue-quill-editor": "^3.0.6",
     "vue-router": "4",
     "vue3-quill": "^0.2.2",
-    "vuex": "^4.0.0"
+    "vuex": "^4.0.0",
+    "webpack-bundle-tracker": "0.4.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
