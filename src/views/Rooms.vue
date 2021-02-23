@@ -46,7 +46,7 @@
         <div class="row">
             <div class="col-md-9">
                 <h3>{{ room.nombre }} | {{ room.host.username }}</h3>
-                <div style="overflow-y:scroll;height:40rem;">
+                <div style="overflow-y:scroll;height:20rem;">
                     <div id="messages">
                         <div v-for="(message, index) in messages" :key="index" class="alert alert-info thin-alert" style="padding: .25rem 1.25rem;" role="alert">
                             <small>{{message.created_at_formatted}}  |  </small><strong>{{message.user_extra.username}}</strong>
@@ -54,14 +54,14 @@
                         </div>
                     </div>
                 </div>
-                <form>
+                <form @submit.prevent="submitMensaje">
                     <div class="form-group row">
                         <label for="chat-input" class="col-sm-1 col-form-label">Message</label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control" id="chat-input" placeholder="Enter message...">
                         </div>
                         <div class="col-sm-2">
-                            <button type="submit" class="btn btn-primary" disabled="disabled">Send</button>
+                            <button type="submit" class="btn btn-primary">Send</button>
                         </div>
                     </div>
                 </form>
