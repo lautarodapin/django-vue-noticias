@@ -10,6 +10,9 @@ import store from './store.js';
 import 'bootstrap';
 
 
+console.log(process.env)
+
+const API_URL = process.env.VUE_APP_API_URL
 // import VueQuillEditor from 'vue-quill-editor'
 // import 'quill/dist/quill.core.css' // import styles
 // import 'quill/dist/quill.snow.css' // for snow theme
@@ -21,7 +24,8 @@ const app = createApp(App).use(store)
     .use(VueAxios, axios)
     .use(store)
 // .use(VueQuillEditor, /* { default global options } */)
-app.axios.defaults.baseURL = "/api/"
+// app.axios.defaults.baseURL = "/api/"
+app.axios.defaults.baseURL = API_URL
 
 
 // QUILL

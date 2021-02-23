@@ -1,5 +1,7 @@
 import { createStore } from 'vuex'
 
+const WS_URL = process.env.VUE_APP_WS_URL
+
 export default createStore({ 
     state:{
         name: "Vuasdsadsae",
@@ -33,7 +35,7 @@ export default createStore({
     },
     actions:{
         setWs(context){
-            const ws = new WebSocket("ws://0.0.0.0:8000/ws/?token=" + context.state.token )
+            const ws = new WebSocket(WS_URL +  "/ws/?token=" + context.state.token )
             context.commit("setWs", ws);
         },
         getNotas(context, axios){
