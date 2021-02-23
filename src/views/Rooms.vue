@@ -40,7 +40,46 @@
     <div v-else class="container">
       <floating-button @click.prevent="back"></floating-button>
 
-      <h3>{{ room.nombre }} | {{ room.host.username }}</h3>
+
+
+      <div class="container text-left">
+        <div class="row">
+            <div class="col-md-9">
+                <h3>{{ room.nombre }} | {{ room.host.username }}</h3>
+                <div style="overflow-y:scroll;height:40rem;">
+                    <div id="messages">
+                        <div v-for="(message, index) in messages" :key="index" class="alert alert-info thin-alert" style="padding: .25rem 1.25rem;" role="alert">
+                            <small>{{message.created_at_formatted}}  |  </small><strong>{{message.user_extra.username}}</strong>
+                            {{message.text}}
+                        </div>
+                    </div>
+                </div>
+                <form>
+                    <div class="form-group row">
+                        <label for="chat-input" class="col-sm-1 col-form-label">Message</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="chat-input" placeholder="Enter message...">
+                        </div>
+                        <div class="col-sm-2">
+                            <button type="submit" class="btn btn-primary" disabled="disabled">Send</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-3">
+                <h4>Connected Users</h4>
+                <ul id="users">
+                    <li v-for="(user, index) in current_users" :key="index">
+                        {{user.username}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        </div>
+        <!-- old -->
+
+
+<!-- 
       <div class="current-users card">
           <ul class="list-group list-group-flush">
               <li v-for="(user, index) in current_users" :key="index" class="list-group-item">
@@ -77,7 +116,7 @@
           ></textarea>
         </div>
         <input type="submit" value="Enviar" class="btn btn-sm btn-success"/>
-      </form>
+      </form> -->
     </div>
     <!-- <router-view></router-view> -->
   </div>
