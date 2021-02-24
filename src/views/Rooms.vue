@@ -58,7 +58,7 @@
                     <div class="form-group row">
                         <label for="chat-input" class="col-sm-1 col-form-label">Message</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" id="chat-input" placeholder="Enter message...">
+                            <input type="text" class="form-control" v-model="mensaje" placeholder="Ingrese un mensaje...">
                         </div>
                         <div class="col-sm-2">
                             <button type="submit" class="btn btn-primary">Send</button>
