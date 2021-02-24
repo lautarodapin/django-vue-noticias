@@ -48,7 +48,17 @@
                 <h3>{{ room.nombre }} | {{ room.host.username }}</h3>
                 <div style="overflow-y:scroll;height:20rem;">
                     <div id="messages">
-                        <div v-for="(message, index) in messages" :key="index" class="alert alert-info thin-alert" style="padding: .25rem 1.25rem;" role="alert">
+                        <div 
+                          v-for="(message, index) in messages" 
+                          :key="index" 
+                          class="alert thin-alert" 
+                          :class="{
+                            'alert-info':message.user == user.id?true:false,
+                            'alert-success':message.user == user.id?false:true,
+                          }"
+                          style="padding: .25rem 1.25rem;" 
+                          role="alert"
+                        >
                             <small>{{message.created_at_formatted}}  |  </small><strong>{{message.user_extra.username}}</strong>
                             {{message.text}}
                         </div>
