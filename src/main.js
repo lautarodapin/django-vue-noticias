@@ -27,7 +27,6 @@ const app = createApp(App).use(store)
 // app.axios.defaults.baseURL = "/api/"
 app.axios.defaults.baseURL = API_URL
 
-
 // QUILL
 
 import { quillEditor } from 'vue3-quill'

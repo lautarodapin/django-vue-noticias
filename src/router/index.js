@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Notas from '../views/Notas.vue'
 import Login from '../views/Login.vue'
+import Register from '../views/Register.vue'
 import NotaForm from '../views/NotaForm.vue'
 import Rooms from '../views/Rooms.vue';
 import Room from '../views/Room.vue';
@@ -16,6 +17,15 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login,
+    beforeEnter(to, from, next){
+      if(store.getters.isLog) return next({name:"Notas"})
+      return next();
+    },
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register,
     beforeEnter(to, from, next){
       if(store.getters.isLog) return next({name:"Notas"})
       return next();

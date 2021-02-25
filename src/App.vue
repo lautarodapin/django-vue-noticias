@@ -13,6 +13,8 @@
     </span>
     <span v-else>
       <router-link :to="{name:'Login'}">Login</router-link> 
+      |
+      <router-link :to="{name:'Register'}">Registrarse</router-link> 
     </span>
 
 
