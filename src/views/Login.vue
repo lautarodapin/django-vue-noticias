@@ -33,7 +33,7 @@ export default {
       this.axios.post("/auth/", {
         username:this.username,
         password:this.password,
-      }).then(response=>{
+      }, {headers:{""}}).then(response=>{
         console.log(response);
         localStorage.setItem('token', response.data.token);
         this.$store.commit("login", response.data)
