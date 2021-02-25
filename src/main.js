@@ -26,7 +26,8 @@ const app = createApp(App).use(store)
 // .use(VueQuillEditor, /* { default global options } */)
 // app.axios.defaults.baseURL = "/api/"
 app.axios.defaults.baseURL = API_URL
-
+app.axios.defaults.xsrfCookieName = "csrftoken"
+    app.axios.defaults.headers["X-CSRF-TOKEN"] = document.cookie.split(";").filter(cookie => cookie.includes("csrftoken")).split("=")[1]
 // QUILL
 
 import { quillEditor } from 'vue3-quill'
