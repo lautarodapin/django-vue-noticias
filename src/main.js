@@ -28,7 +28,8 @@ const app = createApp(App)
 // .use(VueQuillEditor, /* { default global options } */)
 // app.axios.defaults.baseURL = "/api/"
 app.axios.defaults.baseURL = API_URL
-app.axios.defaults.xsrfCookieName = "csrftoken"
+axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+axios.defaults.xsrfCookieName = 'csrftoken'
 console.log(app)
 
 // app.axios.defaults.headers["X-CSRF-TOKEN"] = app.$cookies.get("csrftoken")
