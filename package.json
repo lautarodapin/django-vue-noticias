@@ -16,8 +16,10 @@
     "popper.js": "^1.16.1",
     "vue": "^3.0.5",
     "vue-axios": "^3.2.4",
+    "vue-cookies": "^1.7.4",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "4",
+    "vue3-cookies": "^1.0.1",
     "vue3-quill": "^0.2.2",
     "vuex": "^4.0.0",
     "webpack-bundle-tracker": "0.4.3"

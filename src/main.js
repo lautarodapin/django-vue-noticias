@@ -8,7 +8,7 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import store from './store.js';
 import 'bootstrap';
-
+import VueCookies from 'vue3-cookies'
 
 console.log(process.env)
 
@@ -19,18 +19,23 @@ const API_URL = process.env.VUE_APP_API_URL
 // import 'quill/dist/quill.bubble.css' // for bubble theme
 
 
-const app = createApp(App).use(store)
-    .use(router)
-    .use(VueAxios, axios)
-    .use(store)
+const app = createApp(App)
+.use(store)
+.use(router)
+.use(VueAxios, axios)
+.use(store)
+.use(VueCookies)
 // .use(VueQuillEditor, /* { default global options } */)
 // app.axios.defaults.baseURL = "/api/"
 app.axios.defaults.baseURL = API_URL
 app.axios.defaults.xsrfCookieName = "csrftoken"
-    app.axios.defaults.headers["X-CSRF-TOKEN"] = document.cookie.split(";").filter(cookie => cookie.includes("csrftoken")).split("=")[1]
+console.log(app)
+
+// app.axios.defaults.headers["X-CSRF-TOKEN"] = app.$cookies.get("csrftoken")
 // QUILL
 
 import { quillEditor } from 'vue3-quill'
 app.use(quillEditor)
 
-app.mount('#app')
+const mountedApp = app.mount('#app')
+console.log(mountedApp)
