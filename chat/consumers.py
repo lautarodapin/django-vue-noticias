@@ -53,6 +53,10 @@ class RoomConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer):
         return get_object_or_404(Room, pk=kwargs["pk"])
 
     @action()
+    async def ping(self, **kwargs):
+        await self.send_json("pong")
+
+    @action()
     async def leave_room(self, pk, **kwargs):
         await self.remove_user_from_room(pk)
         await self.notify_users()
@@ -74,10 +78,12 @@ class RoomConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer):
             room=room, 
             user=self.scope["user"],
             text=message)
+        return {}, 200
 
     @action()
     async def subscribe_to_messages_in_room(self, pk, **kwargs):
         await self.message_activity.subscribe(room=pk)
+        await self.send_json("OK")
 
     @model_observer(Message)
     async def message_activity(self, message, observer=None, **kwargs):
@@ -97,23 +103,27 @@ class RoomConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer):
     def message_activiy(self, instance:Message, action, **kwargs):
         return dict(data=MessageSerializer(instance).data, action=action.value, pk=instance.pk)
 
-    async def notify_users(self):
+    async def notify_users(self) -> None:
+        # TODO self.groups no existe en test si es que no te subscribis a la instancia
         room:Room = await self.get_room(pk=self.room_subscribe)
-        for group in self.groups:
-            await self.channel_layer.group_send(
-                group,
-                {
-                    'type':'update_users',
-                    'usuarios':await self.current_users(room)
-                }
-            )
+        if len(self.groups) > 0:
+            for group in self.groups:
+                print("current users", await self.current_users(room))
+                await self.channel_layer.group_send(
+                    group,
+                    {
+                        'type':'update_users',
+                        'usuarios':await self.current_users(room)
+                    }
+                )
 
     async def update_users(self, event:dict):
         await self.send(text_data=json.dumps({"data":event["usuarios"], "action":"update_users"}))
   
     @database_sync_to_async
     def get_room(self, pk:int)->Room:
-        return Room.objects.get(pk=pk)
+        room: Room = Room.objects.get(pk=pk)
+        return room
 
     @database_sync_to_async
     def current_users(self, room:Room):
@@ -127,6 +137,7 @@ class RoomConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer):
     @database_sync_to_async
     def add_user_to_room(self, pk):
         user:User = self.scope["user"]
-        print(user)
+        assert user != None
+        assert self.room_subscribe != None
         if not user.current_rooms.filter(pk=self.room_subscribe).exists():
-            user.current_rooms.add(Room.objects.get(pk=pk))
+            user.current_rooms.add(pk)

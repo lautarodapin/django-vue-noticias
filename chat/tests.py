@@ -7,6 +7,11 @@ from users.models import User
 from rest_framework.authtoken.models import Token
 from django.test import Client
 
+class AuthWebsocketCommunicator(WebsocketCommunicator):
+    def __init__(self, application, path, headers=None, subprotocols=None, user=None):
+        super(AuthWebsocketCommunicator, self).__init__(application, path, headers, subprotocols)
+        if user is not None:
+            self.scope['user'] = user
 
 
 @pytest.mark.django_db(transaction=True)
@@ -39,10 +44,8 @@ async def test_room_consumer():
     room : Room = await database_sync_to_async(Room.objects.create)(nombre="test room", host=user)
     token : Token = await database_sync_to_async(Token.objects.create)(user=user)
 
-    client = Client()
-    await database_sync_to_async(client.force_login)(user)
 
-    communicator = WebsocketCommunicator(EntryDeMultiplexer.as_asgi(), f"/testws/", headers_from_client(client))#?token={token.key}")
+    communicator = AuthWebsocketCommunicator(EntryDeMultiplexer.as_asgi(), f"/testws/", user=user)#?token={token.key}")
     # communicator.scope["user"] = user
     connected, subprotocol = await communicator.connect()
     assert connected
@@ -51,20 +54,83 @@ async def test_room_consumer():
     await communicator.send_json_to(dict(
         stream="room",
         payload=dict(
+            action="ping",
+            request_id="test",
+        )
+    ))
+    response = await communicator.receive_json_from()
+    assert response == dict(payload="pong", stream="room")
+
+    # 1. subscribe_instance
+    await communicator.send_json_to(dict(
+        stream="room",
+        payload=dict(
+            action="subscribe_instance",
+            pk=room.pk,
+            request_id="test",
+        )
+    ))
+    response = await communicator.receive_json_from()
+    assert response == dict(
+        stream="room",
+        payload=dict(
+            action="subscribe_instance",
+            data=None,
+            errors=[],
+            request_id="test",
+            response_status=201
+        )
+    )
+
+    # 2. subscribe_to_messages_in_room
+    await communicator.send_json_to(dict(
+        stream="room",
+        payload=dict(
+            action="subscribe_to_messages_in_room",
+            pk=room.pk,
+            request_id="test",
+        )
+    ))
+    response = await communicator.receive_json_from()
+    assert response == dict(payload="OK", stream="room")
+
+    # 3. join_room
+    await communicator.send_json_to(dict(
+        stream="room",
+        payload=dict(
             action="join_room",
             pk=room.pk,
             request_id="test",
         )
     ))
+    response = await communicator.receive_json_from()
+    assert response["stream"] == "room"
+    assert response["payload"]["action"] == "update_users"    
+    assert response["payload"]["data"][0]["email"] == user.email    
+    assert response["payload"]["data"][0]["username"] == user.username   
 
-    response = await communicator.receive_json_from(timeout=10)
-    assert response == {
-                        "stream":"user",
-                        "payload":{
-                            "pk":user.pk
-                        }
-                    }
-    
+    response = await communicator.receive_json_from()
+    assert response["stream"] == "room"
+    assert response["payload"]["action"] == "update_users"    
+    assert response["payload"]["data"][0]["email"] == user.email    
+    assert response["payload"]["data"][0]["username"] == user.username   
+
+    # 4. Submit message test
+    await communicator.send_json_to(dict(
+        stream="room",
+        payload=dict(
+            action="create_message",
+            message="test_message",
+            request_id="test",
+        )
+    ))
+    response = await communicator.receive_json_from()
+    assert response.get("stream") == "room" 
+    assert response.get("payload").get("action") == "create_message" 
+    assert response.get("payload").get("request_id") == "test" 
+    assert response.get("payload").get("response_status") == 200 
+
+    # 5. Check if user is joined in the room.
     await database_sync_to_async(room.refresh_from_db)()
     current_user = await database_sync_to_async(room.current_users.first)()
     assert  current_user == user
