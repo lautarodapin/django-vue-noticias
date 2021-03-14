@@ -46,7 +46,6 @@ async def test_room_consumer():
 
 
     communicator = AuthWebsocketCommunicator(EntryDeMultiplexer.as_asgi(), f"/testws/", user=user)#?token={token.key}")
-    # communicator.scope["user"] = user
     connected, subprotocol = await communicator.connect()
     assert connected
 
