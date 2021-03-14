@@ -25,7 +25,7 @@ def create_user() -> Tuple[User, Token]:
 
 
 
-@pytest.mark.django_db(transaction=True)
+@pytest.mark.django_db()
 @pytest.mark.asyncio
 def test_register_user():
     response: WSGIRequest = client.post("/api/users/", data={
@@ -36,7 +36,7 @@ def test_register_user():
     assert response.data.get("username") == "test_user"
 
     
-@pytest.mark.django_db(transaction=True)
+@pytest.mark.django_db()
 @pytest.mark.asyncio
 def test_get_users():
     client.post("/api/users/", data={
@@ -45,46 +45,46 @@ def test_get_users():
     }, format="json",)
     response = client.get(f"/api/users/")
     assert response.status_code == status.HTTP_200_OK
-    assert response.data[0]["id"] == 2
+    assert response.data[0]["id"] == 1
     assert response.data[0]["username"] == "test_user"
     
 
-@pytest.mark.django_db(transaction=True)
+@pytest.mark.django_db()
 @pytest.mark.asyncio
 def test_get_user():
     client.post("/api/users/", data={
         "username":"test_user",
         "password":"test_password"
     }, format="json",)
-    response = client.get(f"/api/users/3/")
+    response = client.get(f"/api/users/1/")
     assert response.status_code == status.HTTP_200_OK
-    assert response.data["id"] == 3
+    assert response.data["id"] == 1
     assert response.data["username"] == "test_user"
 
-@pytest.mark.django_db(transaction=True)
+@pytest.mark.django_db()
 @pytest.mark.asyncio
 def test_put_user():
     client.post("/api/users/", data={
         "username":"test_user",
         "password":"test_password"
     }, format="json",)
-    response = client.put(f"/api/users/4/", data={
+    response = client.put(f"/api/users/1/", data={
         "username":"edited_test_username"
     })
     assert response.status_code == status.HTTP_200_OK
-    assert response.data["id"] == 4
+    assert response.data["id"] == 1
     assert response.data["username"] == "edited_test_username"
 
 
-@pytest.mark.django_db(transaction=True)
+@pytest.mark.django_db()
 @pytest.mark.asyncio
 def test_delete_user():
     client.post("/api/users/", data={
         "username":"test_user",
         "password":"test_password"
     }, format="json",)
-    response = client.delete(f"/api/users/5/")
+    response = client.delete(f"/api/users/1/")
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
-    response = client.get("/api/users/5/")
+    response = client.get("/api/users/1/")
     assert response.status_code == status.HTTP_404_NOT_FOUND
