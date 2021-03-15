@@ -1,8 +1,8 @@
-from typing import Tuple
+from typing import List, Tuple
 from django.core.handlers.wsgi import WSGIRequest
 import pytest
 from rest_framework.test import APIClient
-
+import time
 
 from users.models import User
 from rest_framework.authtoken.models import Token
@@ -40,3 +40,67 @@ def test_create_nota():
     assert response.data["cuerpo"] == "cuerpo test"
     assert response.data["autor"] == user.pk
     assert response.data["slug"] == f"{now().strftime('%Y-%m-%d')}-titulo-test-{user.username}"
+
+
+@pytest.mark.django_db()
+def test_get_notas():
+    user, token = create_user()
+    nota_1 : Nota = Nota.objects.create(titulo="titulo 1", subtitulo="subtitulo 1", cuerpo="cuerpo 1", autor=user)
+    nota_2 : Nota = Nota.objects.create(titulo="titulo 2", subtitulo="subtitulo 2", cuerpo="cuerpo 2", autor=user)
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key) # TODO no deberia necesitar autenticacion
+
+    response = client.get("/api/nota/")
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data.__len__() == 2
+    assert response.data[0]["titulo"] == nota_1.titulo
+    assert response.data[1]["titulo"] == nota_2.titulo
+    assert response.data[0]["autor"] == user.pk
+    assert response.data[1]["autor"] == user.pk
+
+@pytest.mark.django_db()
+def test_get_nota():
+    user, token = create_user()
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key) # TODO no deberia necesitar autenticacion
+    nota : Nota = Nota.objects.create(titulo="nota test", cuerpo="cuerpo test", autor=user)
+    response = client.get(f"/api/nota/{nota.slug}/")
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["id"] == nota.pk
+    assert response.data["titulo"] == nota.titulo
+    assert response.data["slug"] == nota.slug
+    assert response.data["cuerpo"] == nota.cuerpo
+    assert response.data["subtitulo"] == nota.subtitulo
+    assert response.data["autor"] == user.pk
+
+
+@pytest.mark.django_db()
+def test_edit_nota():
+    user, token = create_user()
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key) # TODO no deberia necesitar autenticacion  
+    nota : Nota = Nota.objects.create(titulo="Test nota", cuerpo="Test cuerpo nota", autor=user)
+
+    response = client.put(f"/api/nota/{nota.slug}/", data={
+        "titulo":"titulo editado",
+        "cuerpo":"cuerpo editado",
+    }, format="json")
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["id"] == nota.pk
+    assert response.data["autor"] == user.pk
+    assert response.data["titulo"] == "titulo editado"
+    assert response.data["cuerpo"] == "cuerpo editado"
+
+
+@pytest.mark.django_db()
+def test_delete_nota():
+    user, token = create_user()
+    nota : Nota = Nota.objects.create(titulo="Test nota", cuerpo="Test cuerpo nota", autor=user)
+
+    response = client.delete(f"/api/nota/{nota.slug}/")
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key) # TODO no deberia necesitar autenticacion  
+
+    response = client.delete(f"/api/nota/{nota.slug}/")
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+
+    response = client.delete(f"/api/nota/{nota.slug}/")
+    assert response.status_code == status.HTTP_404_NOT_FOUND
