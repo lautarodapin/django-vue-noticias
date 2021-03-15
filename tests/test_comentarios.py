@@ -53,7 +53,7 @@ def test_create_comentario():
 def test_get_comentarios():
     user, token = create_user()
     nota : Nota = Nota.objects.create(titulo="test nota", autor=user)
-    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+    client.credentials(HTTP_AUTHORIZATION="")
 
     comentario_1 = Comentario.objects.create(cuerpo="comentario 1", autor=user, nota=nota)
     comentario_2 = Comentario.objects.create(cuerpo="comentario 2", autor=user, nota=nota)
@@ -76,7 +76,7 @@ def test_get_comentarios():
 def test_get_comentario():
     user, token = create_user()
     nota : Nota = Nota.objects.create(titulo="test nota", autor=user)
-    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+    client.credentials(HTTP_AUTHORIZATION="")
 
     comentario = Comentario.objects.create(cuerpo="comentario 1", autor=user, nota=nota)
 
@@ -91,10 +91,14 @@ def test_get_comentario():
 def test_edit_comentario():
     user, token = create_user()
     nota : Nota = Nota.objects.create(titulo="test nota", autor=user)
-    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
-
     comentario = Comentario.objects.create(cuerpo="comentario 1", autor=user, nota=nota)
+    client.credentials(HTTP_AUTHORIZATION="")
+    response = client.put(f"/api/comentario/{comentario.pk}/", data=dict(
+        cuerpo="comentario editado"
+    ))
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
     response = client.put(f"/api/comentario/{comentario.pk}/", data=dict(
         cuerpo="comentario editado"
     ))
@@ -108,10 +112,12 @@ def test_edit_comentario():
 def test_delete_comentario():
     user, token = create_user()
     nota : Nota = Nota.objects.create(titulo="test nota", autor=user)
-    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
-
     comentario = Comentario.objects.create(cuerpo="comentario 1", autor=user, nota=nota)
+    client.credentials(HTTP_AUTHORIZATION="")
+    response = client.delete(f"/api/comentario/{comentario.pk}/")
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
     response = client.delete(f"/api/comentario/{comentario.pk}/")
     assert response.status_code == status.HTTP_204_NO_CONTENT
 

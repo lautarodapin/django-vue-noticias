@@ -47,8 +47,7 @@ def test_get_notas():
     user, token = create_user()
     nota_1 : Nota = Nota.objects.create(titulo="titulo 1", subtitulo="subtitulo 1", cuerpo="cuerpo 1", autor=user)
     nota_2 : Nota = Nota.objects.create(titulo="titulo 2", subtitulo="subtitulo 2", cuerpo="cuerpo 2", autor=user)
-    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key) # TODO no deberia necesitar autenticacion
-
+    client.credentials(HTTP_AUTHORIZATION="")
     response = client.get("/api/nota/")
     assert response.status_code == status.HTTP_200_OK
     assert response.data.__len__() == 2
@@ -60,7 +59,7 @@ def test_get_notas():
 @pytest.mark.django_db()
 def test_get_nota():
     user, token = create_user()
-    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key) # TODO no deberia necesitar autenticacion
+    client.credentials(HTTP_AUTHORIZATION="")
     nota : Nota = Nota.objects.create(titulo="nota test", cuerpo="cuerpo test", autor=user)
     response = client.get(f"/api/nota/{nota.slug}/")
     assert response.status_code == status.HTTP_200_OK
@@ -75,8 +74,15 @@ def test_get_nota():
 @pytest.mark.django_db()
 def test_edit_nota():
     user, token = create_user()
-    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key) # TODO no deberia necesitar autenticacion  
     nota : Nota = Nota.objects.create(titulo="Test nota", cuerpo="Test cuerpo nota", autor=user)
+    client.credentials(HTTP_AUTHORIZATION="")
+    response = client.put(f"/api/nota/{nota.slug}/", data={
+        "titulo":"titulo editado",
+        "cuerpo":"cuerpo editado",
+    }, format="json")
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
     response = client.put(f"/api/nota/{nota.slug}/", data={
         "titulo":"titulo editado",
@@ -93,14 +99,16 @@ def test_edit_nota():
 def test_delete_nota():
     user, token = create_user()
     nota : Nota = Nota.objects.create(titulo="Test nota", cuerpo="Test cuerpo nota", autor=user)
+    client.credentials(HTTP_AUTHORIZATION="")
 
     response = client.delete(f"/api/nota/{nota.slug}/")
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
-    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key) # TODO no deberia necesitar autenticacion  
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
     response = client.delete(f"/api/nota/{nota.slug}/")
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
     response = client.delete(f"/api/nota/{nota.slug}/")
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
