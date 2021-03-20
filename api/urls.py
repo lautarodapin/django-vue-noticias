@@ -12,7 +12,7 @@ router.register(r'rooms', RoomViewSet, basename='room')
 router.register(r'messages', MessageViewSet, basename='message')
 router.register(r'nota', NotaViewSet, basename="nota")
 router.register(r'comentario', ComentarioViewSet, basename="comentario")
-
+router.register(r'todos', TodoViewset, basename='todo')
 
 urlpatterns = [
     path('get-token/', csrf_exempt(obtain_token)),

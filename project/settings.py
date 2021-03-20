@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'chat.apps.ChatConfig',
     'users.apps.UsersConfig',
     'news.apps.NewsConfig',
+    'todo.apps.TodoConfig',
 ]
 
 MIDDLEWARE = [

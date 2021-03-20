@@ -1,3 +1,4 @@
+from django.db.models import QuerySet
 from rest_framework import status, viewsets, views
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -21,10 +22,24 @@ from chat.serializers import (MessageSerializer, RoomSerializer,)
 from users.models import User
 from users.serializers import UserSerializer
 
+from todo.serializers import (Todo, TodoSerializer,)
+
 from rest_framework.response import Response
 from typing import List
 import json
 
+class TodoViewset(viewsets.ModelViewSet):
+    queryset = Todo.objects.all()
+    serializer_class = TodoSerializer
+    lookup_field = "pk"
+    permission_classes = [IsAuthenticatedOrReadOnly,]
+
+
+class RoomViewSet(viewsets.ModelViewSet):
+    queryset = Room.objects.all()
+    serializer_class = RoomSerializer
+    lookup_field = "pk"
+    permission_classes = [IsAuthenticatedOrReadOnly,]
 class ExtendedObtainAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
@@ -41,11 +56,6 @@ class UserViewset(viewsets.ModelViewSet):
         user = User.objects.get(auth_token__key=request.query_params['token'])
         return Response({"user":UserSerializer(user).data}, status=status.HTTP_200_OK)
 
-class RoomViewSet(viewsets.ModelViewSet):
-    queryset = Room.objects.all()
-    serializer_class = RoomSerializer
-    lookup_field = "pk"
-    permission_classes = [IsAuthenticatedOrReadOnly,]
 
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
