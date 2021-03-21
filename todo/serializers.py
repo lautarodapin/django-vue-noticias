@@ -24,8 +24,8 @@ class TodoSerializer(serializers.ModelSerializer):
         return representation
 
     def get_time_since_created(self, obj: Todo):
-        return naturaltime(obj.created_at)
+        return str(naturaltime(obj.created_at))
 
     def get_time_since_last_mod(self, obj: Todo):
-        return naturaltime(obj.mod_at)
+        return str(naturaltime(obj.mod_at))
 
