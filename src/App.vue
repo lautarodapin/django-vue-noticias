@@ -4,7 +4,7 @@
     |
     <router-link :to="{name:'NotaForm'}">Crear nota</router-link>
     |
-    <router-link :to="{name:'Todos'}">Todos</router-link>
+    <router-link :to="{name:'Todos'}">Todos (API)</router-link>
     |
     <router-link :to="{name:'Rooms'}">Chats</router-link>
     |
