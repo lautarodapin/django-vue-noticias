@@ -32,7 +32,11 @@ class TodoViewset(viewsets.ModelViewSet):
     queryset = Todo.objects.all()
     serializer_class = TodoSerializer
     lookup_field = "pk"
-    permission_classes = [IsAuthenticatedOrReadOnly,]
+    permission_classes = [IsAuthenticated,]
+
+    def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user)
+    
 
 
 class RoomViewSet(viewsets.ModelViewSet):

@@ -45,8 +45,8 @@ def test_create_nota():
 @pytest.mark.django_db()
 def test_get_notas():
     user, token = create_user()
-    nota_1 : Nota = Nota.objects.create(titulo="titulo 1", subtitulo="subtitulo 1", cuerpo="cuerpo 1", autor=user)
-    nota_2 : Nota = Nota.objects.create(titulo="titulo 2", subtitulo="subtitulo 2", cuerpo="cuerpo 2", autor=user)
+    nota_1 : Nota = Nota.objects.create(id=1, titulo="titulo 1", subtitulo="subtitulo 1", cuerpo="cuerpo 1", autor=user)
+    nota_2 : Nota = Nota.objects.create(id=2, titulo="titulo 2", subtitulo="subtitulo 2", cuerpo="cuerpo 2", autor=user)
     client.credentials(HTTP_AUTHORIZATION="")
     response = client.get("/api/nota/")
     assert response.status_code == status.HTTP_200_OK
