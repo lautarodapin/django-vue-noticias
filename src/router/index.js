@@ -6,6 +6,7 @@ import NotaForm from '../views/NotaForm.vue'
 import Rooms from '../views/Rooms.vue';
 import Room from '../views/Room.vue';
 import Todos from '../views/Todos.vue';
+import TodosWS from '../views/TodosWS.vue';
 import store from "../store.js";
 
 const routes = [
@@ -36,6 +37,15 @@ const routes = [
     path: '/todos',
     name: 'Todos',
     component: Todos,
+    beforeEnter(to, from, next){
+      if(store.getters.isLog) return next()
+      return next({name:'Login'})
+    }
+  },
+  {
+    path: '/todos-ws',
+    name: 'TodosWS',
+    component: TodosWS,
     beforeEnter(to, from, next){
       if(store.getters.isLog) return next()
       return next({name:'Login'})

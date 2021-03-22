@@ -31,14 +31,13 @@ class TodoConsumer(
         ''' Retrive only current user todos '''
         return super().get_queryset(**kwargs).filter(user=self.scope["user"])
     
-
     @model_observer(Todo)
     async def todos_change_handler(self, message, observer=None, action=None, **kwargs):
-        await self.send_json(dict(body=message, action=action))
+        await self.send_json(dict(data=message, action=action, response_status=status.HTTP_200_OK))
 
     @todos_change_handler.serializer
     def todos_serializer(self, instance: Todo, action, **kwargs):
-        return dict(data=TodoSerializer(instance=instance).data, action=action)
+        return TodoSerializer(instance=instance).data
 
     @todos_change_handler.groups_for_signal
     def todos_change_handler(self, instance: Todo, **kwargs):

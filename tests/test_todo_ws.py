@@ -111,6 +111,7 @@ async def test_todo_consumer():
             ),
         ),
     ))
+    await database_sync_to_async(todo.refresh_from_db)()
     response = await communicator.receive_json_from()
     assert response["stream"] == "todo"
     assert response["payload"]["response_status"] == status.HTTP_200_OK
@@ -133,6 +134,8 @@ async def test_todo_consumer():
     response = await communicator.receive_json_from()
     assert response["payload"]["response_status"] == status.HTTP_204_NO_CONTENT
 
+
+    # Test SUBSCRIBE TODOS IN USER
     await communicator.send_json_to(dict(
         stream="todo",
         payload=dict(
@@ -146,6 +149,22 @@ async def test_todo_consumer():
     assert response["payload"]["request_id"] == 5
     assert response["payload"]["errors"] == []
     assert response["payload"]["action"] == "subscribe_todos_in_user"
+
+    # UPDATING TODO
+    todo.title = "testing model observer"
+    await database_sync_to_async(todo.save)()
+    response = await communicator.receive_json_from()
+    assert response["payload"]["response_status"] == status.HTTP_200_OK
+    assert response["payload"]["data"]["title"] == "testing model observer"
+    assert response["payload"]["data"]["id"] == todo.pk
+    assert response["payload"]["data"]["user"]["id"] == user.pk
+    assert response["payload"]["action"] == "update"
+
+    # UPDATING OTHER USERS TODO
+    todo_2.title = "testing model observer todo 2"
+    await database_sync_to_async(todo_2.save)()
+    # response = await communicator.receive_json_from()
+    # todo how to assert TimeoutError
 
 
     await communicator.disconnect()

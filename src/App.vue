@@ -6,6 +6,8 @@
     |
     <router-link :to="{name:'Todos'}">Todos (API)</router-link>
     |
+    <router-link :to="{name:'TodosWS'}">Todos (WS)</router-link>
+    |
     <router-link :to="{name:'Rooms'}">Chats</router-link>
     |
     <span v-if="isAuth">
