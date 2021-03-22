@@ -33,7 +33,8 @@ class TodoConsumer(
     
     @model_observer(Todo)
     async def todos_change_handler(self, message, observer=None, action=None, **kwargs):
-        await self.send_json(dict(data=message, action=action, response_status=status.HTTP_200_OK))
+        if action != "create":
+            await self.send_json(dict(data=message, action=action, response_status=status.HTTP_200_OK))
 
     @todos_change_handler.serializer
     def todos_serializer(self, instance: Todo, action, **kwargs):

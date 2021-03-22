@@ -1,6 +1,19 @@
 <template>
   <div class="container">
     <h3>ToDos de {{ user.username }}</h3>
+    <form @submit.prevent="createTodo">
+        <div class="form-group row">
+        <label for="title" class="col-1 col-form-label">
+            ToDo: 
+        </label>
+        <div class="col">
+            <input type="text" v-model="form.title" id="title" class="form-control" placeholder="tarea pendiente">
+        </div>
+        <div class="col-1">
+            <input type="submit" value="Crear" class="btn btn-success">
+        </div>
+        </div>
+    </form>
     <div v-if="todos.length > 0" class="card">
       <ul class="list-group list-group-flush">
         <li class="list-group-item" v-for="todo in todos" :key="todo.id">
@@ -50,6 +63,9 @@ export default {
     return {
       todos: [],
       dones: [],
+      form:{
+        title:""
+      }
     };
   },
   methods: {
@@ -91,6 +107,13 @@ export default {
                   } else {
                     self.todos[index] = response.payload.data;
                   }
+                }
+                break;
+              case "create":
+                if (response.payload.data.is_done == false){
+                  self.todos.push(response.payload.data)
+                } else {
+                  self.dones.push(response.payload.data)
                 }
                 break;
               default:
@@ -146,6 +169,19 @@ export default {
         })
       );
     },
+    createTodo(){
+      this.ws.send(JSON.stringify({
+        stream: "todo",
+        payload: {
+          action: "create",
+          request_id: Date.now(),
+          data: {
+            title: this.form.title,
+            user: this.user.id,
+          }
+        }
+      }))
+    }
   },
   computed: {
     token() {
