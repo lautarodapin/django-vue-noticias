@@ -65,8 +65,11 @@ export default {
   created(){
     // this.axios.defaults.headers["X-CSRF-TOKEN"] = this.$cookies.get("csrftoken")
   },
+  beforeCreate(){
+    // this.getToken();
+    this.$store.dispatch("getToken", this.axios)
+  },
   mounted(){
-    this.getToken();
     this.$store.dispatch("setWs")
   }
 }

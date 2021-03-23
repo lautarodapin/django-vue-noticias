@@ -46,6 +46,20 @@ export default createStore({
                 context.commit("setNotas", response.data)
                 console.log(response)
             })
+        },
+        getToken(context, axios){
+            console.log("Store get token")
+            if (context.state.token != null){
+                axios.post("/get-token/", {
+                    token: context.state.token,
+                }, {headers:{
+                    Authorization: `Token ${context.state.token}`,
+                }})
+                .then(response => {
+                    console.log("Get token", response)
+                    context.commit("login", response.data)
+                })
+            }
         }
     },
 })
