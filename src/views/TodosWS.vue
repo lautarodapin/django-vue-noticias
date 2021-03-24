@@ -195,7 +195,23 @@ export default {
           }
         }
       }))
-    }
+    },
+    waitForSocketConnection(callback){
+      var self = this;
+      setTimeout(
+        function () {
+            if (self.ws.readyState === 1) {
+                console.log("Connection is made")
+                if (callback != null){
+                    callback();
+                }
+            } else {
+                console.log("wait for connection...")
+                self.waitForSocketConnection(callback);
+          }
+        }
+      , 1000);
+    },
   },
   computed: {
     token() {
@@ -209,8 +225,10 @@ export default {
     },
   },
   created() {
-    this.createWs();
-    this.getTodos();
+    this.waitForSocketConnection(()=>{
+      this.createWs();
+      this.getTodos();
+    })
   },
 };
 </script>
