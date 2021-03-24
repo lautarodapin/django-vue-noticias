@@ -30,6 +30,11 @@
     <div v-if="selected == false" class="container">
       <h4>Crear nuevo chat</h4>
       <form  @submit.prevent="createRoom" method="post">
+        <div v-if="errors.length > 0" class="list-group">
+          <div v-for="(error, index) in errors" :key="index" class="alert alert-warning" role="alert">
+            {{error}}
+          </div>
+        </div>
         <div class="form-group">
           <label for="id_nombre">Nombre</label>
           <input type="text" class="form-control" name="Nombre" v-model="nombre" id="id_nombre" />
@@ -38,10 +43,11 @@
       </form>
     </div>
     <div v-else class="container">
-      <floating-button @click.prevent="back"></floating-button>
-
-
-
+      <floating-button @click.prevent="back" :hidden="true"></floating-button>
+      <button type="button" class="close" aria-label="Close" @click="back">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <br>
       <div class="container text-left">
         <div class="row">
             <div class="col-md-9">
@@ -150,6 +156,7 @@ export default {
       mensaje: "",
       messages: [],
       current_users:[],
+      errors: [],
     };
   },
   methods: {
@@ -205,7 +212,15 @@ export default {
         .then((response) => {
           console.log(response);
           this.rooms.push(response.data);
-        });
+        })
+        .catch(error =>{
+          console.log(error.response)
+          var array = []
+          for(var key in error.response.data){
+            array.push(`${key.toUpperCase()}: ${error.response.data[key]}`)
+          }
+          this.errors = array
+        })
     },
     createWs() {
         const component = this;

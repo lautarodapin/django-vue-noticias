@@ -1,5 +1,10 @@
 <template>
     <form @submit.prevent="submitForm">
+        <div v-if="errors.length > 0" class="list-group">
+        <div v-for="(error, index) in errors" :key="index" class="alert alert-warning" role="alert">
+            {{error}}
+        </div>
+        </div>
         <div class="form-group row">
 
         <label for="titulo" class="col-1 col-form-label">
@@ -22,6 +27,7 @@ export default {
     data(){
         return{
             titulo:"",
+            errors: [],
         }
     },
     methods:{
@@ -36,8 +42,16 @@ export default {
                 console.log(response)
                 this.$emit("todoCreated", response.data)
                 this.titulo = ""
+                this.errors = []
             })
-            .catch(error => console.log(error))
+            .catch(error => {
+                console.log(error.response)        
+                var array = []
+                for(var key in error.response.data){
+                array.push(`${key.toUpperCase()}: ${error.response.data[key]}`)
+                }
+                this.errors = array
+            })
         }
     },
     

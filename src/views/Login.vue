@@ -2,6 +2,13 @@
   <div class="login container">
       <h1>Login</h1>
       <form method="post" @submit.prevent="login">
+        <ul v-if="errors.length > 0" class="list-group">
+          <li class="list-group-item">
+            <div v-for="error in errors" :key="error" class="alert alert-warning" role="alert">
+              {{error}}
+            </div>
+          </li>
+        </ul>
         <div class="form-group">
           <label for="id_username">Usuario</label>
           <input type="text" v-model="username" name="username" id="id_username" autocomplete="current-username" class="form-control">
@@ -22,6 +29,7 @@ export default {
     return{
       username:"",
       password:"",
+      errors: [],
     }
   },
   computed:{
@@ -39,6 +47,10 @@ export default {
         this.$store.commit("login", response.data)
         this.$store.dispatch("setWs")
         this.$router.push({name:"Notas"});
+      })
+      .catch(error => {
+        console.log(error.response)
+        this.errors = error.response.data.non_field_errors
       })
     }
   },

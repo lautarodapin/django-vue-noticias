@@ -2,6 +2,11 @@
   <div class="container">
     <h4>Nota form</h4>
     <form @submit.prevent="crearNota" method="post">
+      <div v-if="errors.length > 0" class="list-group">
+        <div v-for="(error, index) in errors" :key="index" class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{error}}
+        </div>
+      </div>      
       <div class="form-group">
         <label for="id_titulo">Titulo</label>
         <input type="text" v-model="titulo" id="id_titulo" class="form-control">
@@ -10,10 +15,6 @@
         <label for="id_subtitulo">Subtitulo</label>
         <input type="text" v-model="subtitulo" id="id_subtitulo" class="form-control">
       </div>
-      <!-- <div class="form-group">
-        <label for="id_cuerpo">Cuerpo</label>
-        <textarea v-model="cuerpo" id="id_cuerpo" rows="10" class="form-control"></textarea>
-      </div> -->
       <div class="form-group">
         <quill-editor
           v-model="cuerpo"
@@ -42,6 +43,7 @@ export default {
       editorOption: {},
       titulo:"",
       subtitulo:"",
+      errors: [],
     }
   },
   methods:{
@@ -64,6 +66,14 @@ export default {
         }
       }).then(response=>{
         console.log(response)
+      })
+      .catch(error => {
+        console.log(error.response)
+        var array = []
+        for(var key in error.response.data){
+          array.push(`${key.toUpperCase()}: ${error.response.data[key]}`)
+        }
+        this.errors = array
       })
     },
   },

@@ -1,6 +1,11 @@
 <template>
   <div class="container">
     <h3>ToDos de {{ user.username }}</h3>
+    <div v-if="errors.length > 0" class="list-group">
+      <div v-for="(error, index) in errors" :key="index" class="alert alert-warning" role="alert">
+        {{error}}
+      </div>
+    </div>
     <todo-form @todoCreated="(data) => this.todos.push(data)"/>
     <div v-if="todos.length > 0" class="card">
       <ul class="list-group list-group-flush">
@@ -53,6 +58,7 @@ export default {
     return {
       todos: [],
       dones: [],
+      errors: [],
     };
   },
   methods: {
@@ -68,8 +74,16 @@ export default {
         console.log(response)
         this.todos.pop(this.todos.findIndex(_todo => _todo.id == todo.id))
         this.dones.push(response.data)
+        this.errors = []
       })
-      .catch(error => console.log(error))
+      .catch(error => {
+        console.log(error.response)        
+        var array = []
+        for(var key in error.response.data){
+          array.push(`${key.toUpperCase()}: ${error.response.data[key]}`)
+        }
+        this.errors = array
+      })
     },
     getTodo() {
       this.axios

@@ -4,16 +4,20 @@ const WS_URL = process.env.VUE_APP_WS_URL
 
 export default createStore({ 
     state:{
-        name: "Vuasdsadsae",
-        token: localStorage.getItem("token") || null,
+        token: localStorage.getItem("token") || '',
+        status: '',
         user:null,
         notas:[],
         ws: null,
     },
     getters:{
-        isLog: state => state.token && state.user
+        isLog: state => !!state.token
     },
     mutations:{
+        AUTH_REQUEST: state => state.status = 'loading',
+        AUTH_SUCCESS: state => state.status = 'success',
+        AUTH_ERROR: state => state.status = 'error',
+        AUTH_NOT_LOG: state => state.status = 'not log',
         setWs(state, ws){
             console.log("Mutation setWs", state, ws);
             state.ws = ws;
@@ -49,7 +53,8 @@ export default createStore({
         },
         getToken(context, axios){
             console.log("Store get token")
-            if (context.state.token != null){
+            context.commit("AUTH_REQUEST");
+            if (context.state.token != ''){
                 axios.post("/get-token/", {
                     token: context.state.token,
                 }, {headers:{
@@ -58,8 +63,15 @@ export default createStore({
                 .then(response => {
                     console.log("Get token", response)
                     context.commit("login", response.data)
+                    context.dispatch("setWs")
+                    context.commit("AUTH_SUCCESS");
+                })
+                .catch(error => {
+                    console.log(error)
+                    context.commit("AUTH_ERROR")
                 })
             }
+            context.commit("AUTH_NOT_LOG");
         }
     },
 })

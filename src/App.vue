@@ -23,7 +23,15 @@
 
 
   </div>
-  <router-view/>
+  <div v-if="status == 'success' | status == 'not log'">
+    <router-view/>
+  </div>
+  <div v-else-if="status == 'loading'">
+    Cargando
+  </div>
+  <div v-else-if="status == 'error'">
+    Error
+  </div>
 </template>
 <script>
 export default {
@@ -52,6 +60,9 @@ export default {
     }
   },
   computed:{
+    status() {
+      return this.$store.state.status
+    },
     isAuth(){
       return this.$store.state.token != null && this.$store.state.user != null
     },
@@ -63,14 +74,12 @@ export default {
     },
   },
   created(){
-    // this.axios.defaults.headers["X-CSRF-TOKEN"] = this.$cookies.get("csrftoken")
   },
   beforeCreate(){
-    // this.getToken();
     this.$store.dispatch("getToken", this.axios)
   },
   mounted(){
-    this.$store.dispatch("setWs")
+    // this.$store.dispatch("setWs")
   }
 }
 </script>

@@ -1,6 +1,11 @@
 <template>
   <div class="container">
     <h3>ToDos de {{ user.username }}</h3>
+        <div v-if="errors.length > 0" class="list-group">
+          <div v-for="(error, index) in errors" :key="index" class="alert alert-warning" role="alert">
+            {{error}}
+          </div>
+        </div>
     <form @submit.prevent="createTodo">
         <div class="form-group row">
         <label for="title" class="col-1 col-form-label">
@@ -63,6 +68,7 @@ export default {
     return {
       todos: [],
       dones: [],
+      errors: [],
       form:{
         title:""
       }
@@ -74,6 +80,14 @@ export default {
       this.ws.onmessage = function (e) {
         const response = JSON.parse(e.data);
         console.log("On Message", response);
+        if (response.payload.errors.length > 0){  
+          var array = []
+          for(var key in response.payload.errors){
+            array.push(`${key}`)
+          }
+          self.errors = response.payload.errors.map(obj => `${Object.keys(obj)[0].toUpperCase()}: ${Object.values(obj)[0]}`)
+          return
+        }
         switch (response.stream) {
           case "todo":
             switch (response.payload.action) {
