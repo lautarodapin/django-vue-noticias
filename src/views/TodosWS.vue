@@ -195,6 +195,7 @@ export default {
           }
         }
       }))
+      this.form.title = ""
     },
     waitForSocketConnection(callback){
       var self = this;
