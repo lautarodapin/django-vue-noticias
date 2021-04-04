@@ -51,6 +51,11 @@ export default {
         console.log('editor change!', quill, html, text)
         this.cuerpo = html
     },
+    cleanForm(){
+      this.cuerpo = "";
+      this.titulo = "";
+      this.subtitulo = "";
+    },
     crearNota(){
       console.log("Crear nota");
       const data = {
@@ -66,6 +71,10 @@ export default {
         }
       }).then(response=>{
         console.log(response)
+        this.cleanForm();
+        this.$router.push({
+          name:"Notas"
+        })
       })
       .catch(error => {
         console.log(error.response)
