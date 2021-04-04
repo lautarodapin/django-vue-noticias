@@ -71,6 +71,7 @@ export default {
         }
       }).then(response=>{
         console.log(response)
+        this.$store.dispatch("addMessage", `Nota "${this.titulo} creada con exito!"`)
         this.cleanForm();
         this.$router.push({
           name:"Notas"

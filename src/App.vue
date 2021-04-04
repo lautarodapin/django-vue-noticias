@@ -23,6 +23,14 @@
 
 
   </div>
+  <div v-if="messages.length > 0" class="list-group">
+    <div v-for="(message, index) in messages" :key="index" class="alert alert-info" role="alert">
+      {{message}}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
   <div v-if="status == 'success' | status == 'not log'">
     <router-view/>
   </div>
@@ -72,6 +80,9 @@ export default {
     token(){
       return this.$store.state.token
     },
+    messages(){
+      return this.$store.state.messages
+    }
   },
   created(){
   },

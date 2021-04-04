@@ -9,6 +9,7 @@ export default createStore({
         user:null,
         notas:[],
         ws: null,
+        messages: [],
     },
     getters:{
         isLog: state => !!state.token
@@ -35,9 +36,15 @@ export default createStore({
         },
         setNotas(state, payload){
             state.notas = payload
+        },
+        addMessage(state, data){
+            state.messages.push(data)
         }
     },
     actions:{
+        addMessage(context, message){
+            context.commit("addMessage", message);
+        },
         setWs(context){
             const ws = new WebSocket(WS_URL +  "/ws/?token=" + context.state.token )
             context.commit("setWs", ws);
